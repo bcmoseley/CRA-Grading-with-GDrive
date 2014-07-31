@@ -1,0 +1,75 @@
+//This script takes information from your Grading Rubric, generates individual student
+//reports, and shares those reports with students.
+
+function onOpen() {
+  var menuEntries = [ {name: "Create Grade Report from Sheet", functionName: "createDocFromSheet"}];
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ss.addMenu("Grade Report", menuEntries);
+}
+
+function createDocFromSheet(){
+  
+  var templateid = "1o7Qnjnyy88zCsnJZTR9IlkWotPSZi60vnlzmQjMhLY4";//This is where you insert the id you've gotten from the template.
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  var assignmentname = sheet.getRange(2,3).getValue();
+  var categories = sheet.getRange(1,3,1, sheet.getLastColumn()-2).getValues();
+  var roster = sheet.getRange(2,1,sheet.getLastRow()-1,1).getValues();
+  var emaillist = sheet.getRange(2,2,sheet.getLastRow()-1,1).getValues();
+  
+for (var i = 0; i<roster.length;i++){
+    var stuid = roster[i];
+    var stuidemail = emaillist[i]; 
+    var docid = DocsList.getFileById(templateid).makeCopy(assignmentname + " Grade Sheet for "+ stuid).getId();
+    var grades = sheet.getRange(i+2,4,1, sheet.getLastColumn()-2).getValues();
+    var notes = sheet.getRange(i+2, sheet.getLastColumn(),1,1).getValues();
+    
+  for (var s in categories){
+    var column = categories[s];
+    var gradecolumn = grades[s];
+    //Logger.log(gradecolumn[0]);
+
+//This pulls data from the assignment name, category, and notes sections of the spreadsheet. It can pull up to 10 categories.
+//If more are needed, add them here and to the template.
+//There's probably a more elegant way to do this.    
+    var doc = DocumentApp.openById(docid);
+    var body = doc.getActiveSection();
+    body.replaceText("%ASSIGNMENT_NAME%", column[0]);
+    body.replaceText("%CATEGORY_1%", column[1]);
+    body.replaceText("%CATEGORY_2%", column[2]);
+    body.replaceText("%CATEGORY_3%", column[3]);
+    body.replaceText("%CATEGORY_4%", column[4]);
+    body.replaceText("%CATEGORY_5%", column[5]);
+    body.replaceText("%CATEGORY_6%", column[6]);
+    body.replaceText("%CATEGORY_7%", column[7]);
+    body.replaceText("%CATEGORY_8%", column[8]);
+    body.replaceText("%CATEGORY_9%", column[9]);
+    body.replaceText("%CATEGORY_10%", column[10]);
+    body.replaceText("%GRADE_1%", gradecolumn[0]+"/4");
+    body.replaceText("%GRADE_2%", gradecolumn[1]+"/4");
+    body.replaceText("%GRADE_3%", gradecolumn[2]+"/4");
+    body.replaceText("%GRADE_4%", gradecolumn[3]+"/4");
+    body.replaceText("%GRADE_5%", gradecolumn[4]+"/4");
+    body.replaceText("%GRADE_6%", gradecolumn[5]+"/4");
+    body.replaceText("%CATEGORY_7%", gradecolumn[6]+"/4");
+    body.replaceText("%CATEGORY_8%", gradecolumn[7]+"/4");
+    body.replaceText("%CATEGORY_9%", gradecolumn[8]+"/4");
+    body.replaceText("%CATEGORY_10%", gradecolumn[9]+"/4");
+    body.replaceText("%NOTES%", notes);
+    doc.saveAndClose();  
+    
+    
+    var file = DocsList.getFileById(docid);
+    var url = file.getUrl();
+    var folder = DocsList.getFolder(stuid+" - MUS-212 - Assignment Folder");
+    file.addToFolder(folder);
+    
+    //var message = 'You can access the Submitted documents <A HERF="' + url + '">here</A>.'; 
+    //Logger.log(stuidemail);
+    //var subject = "New Assignment Grade";
+    //MailApp.sendEmail(stuidemail, subject, message);
+    
+  }
+  }
+
+}
