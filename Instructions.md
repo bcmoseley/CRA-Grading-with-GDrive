@@ -21,7 +21,7 @@ Follow these instructions to set up your Grading Rubric and send student grades:
 10. Save the file (click on the disk icon, or File > save), and then close the script editor window.
 
 
-You've done all of the hard part involving the script code! Now you want to set up your grading rubric. 
+You've done all of the hard stuff! Now you want to set up your grading rubric. 
 
 1. List all of your students in column A and their Google Drive emails in Column B.
 
